@@ -1,5 +1,5 @@
 import Card from "./Card";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import { restaurantList } from "../config";
 
 
@@ -13,8 +13,29 @@ const filteredRestuarants=(searchText)=>{
 };
 
 const Body=()=>{
+
+    //create a local state variable in react
+    //modify the searchText wit he.target.value using useState
+    // e.target.alue is whatever you write in the input box
+
     const[searchText, setSearchText] = useState("");
     const[restaurants, setRestuarants] = useState(restaurantList);
+
+    //when you are rendering for the first time it will call the initial data
+    // then after API call the data will be fetched from the API
+
+    useEffect(()=>{
+        getRestuarants();
+    },[]);
+
+    async function getRestuarants(){
+        const data = await fetch("https://www.swiggy.com/dapi/restaurants/list/v5?lat=27.8973944&lng=78.0880129&page_type=DESKTOP_WEB_LISTING");
+        const json = await data.json();
+        console.log(json);
+        
+        setRestuarants(json?.data?.cards[2]?.data?.data?.cards)
+    
+    }   
     return(
         <>
             <div className="search-box">
